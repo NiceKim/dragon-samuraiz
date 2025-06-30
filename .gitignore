@@ -1,0 +1,13 @@
+ 
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+
+node_modules
+.env
+.ebextensions/
+.vscode/
+
+client/node_modules
+client/build

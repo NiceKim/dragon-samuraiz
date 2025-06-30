@@ -1,0 +1,27 @@
+{
+  "name": "dragon-samurai-rps",
+  "version": "1.0.0",
+  "description": "Dragon SamuraiZ 가위바위보 게임",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "cd server && npm start",
+    "build": "cd client && npm install && npm run build",
+    "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm start\"",
+    "install-all": "cd client && npm install && cd ../server && npm install"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": ["react", "socket.io", "game"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.4",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+} 

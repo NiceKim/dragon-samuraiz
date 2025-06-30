@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="실시간 가위바위보 게임"
+    />
+    
+    <!-- 오디오 파일 프리로드 -->
+    <link rel="preload" href="%PUBLIC_URL%/audio/win.mp3" as="audio" type="audio/mpeg">
+    <link rel="preload" href="%PUBLIC_URL%/audio/lose.mp3" as="audio" type="audio/mpeg">
+    <link rel="preload" href="%PUBLIC_URL%/audio/slash.mp3" as="audio" type="audio/mpeg">
+    <link rel="preload" href="%PUBLIC_URL%/audio/hit.mp3" as="audio" type="audio/mpeg">
+    <link rel="preload" href="%PUBLIC_URL%/audio/parry.mp3" as="audio" type="audio/mpeg">
+    
+    <title>용사 가위바위보</title>
+  </head>
+  <body>
+    <noscript>이 앱을 실행하려면 JavaScript를 활성화해야 합니다.</noscript>
+    <div id="root"></div>
+  </body>
+</html>

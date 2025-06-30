@@ -1,0 +1,11 @@
+.git
+.gitignore
+README.md
+node_modules
+client/node_modules
+server/node_modules
+client/src
+client/public
+client/package-lock.json
+server/package-lock.json
+package-lock.json 
