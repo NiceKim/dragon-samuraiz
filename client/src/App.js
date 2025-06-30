@@ -27,6 +27,7 @@ function App() {
   const [showCardReveal, setShowCardReveal] = useState(false);
   const [gameStartTime, setGameStartTime] = useState(null);
   const [gameTimeout, setGameTimeout] = useState(null);
+  const [focusPoint, setFocusPoint] = useState(0);
   const gameResultRef = useRef(null);
   const [opponentChoice, setOpponentChoice] = useState(null);
   
@@ -69,6 +70,7 @@ function App() {
       setGameState('game');
       setGameStartTime(data.startTime);
       setGameTimeout(data.gameTimeout);
+      setFocusPoint(data.focusPoint);
       resetGameStates();
     });
 
@@ -196,6 +198,7 @@ function App() {
             gameTimeout={gameTimeout}
             opponentChoice={opponentChoice}
             cardRevealData={cardRevealData}
+            focusPoint={focusPoint}
           />
         );
       default:

@@ -81,7 +81,7 @@ const HomeScreen = ({ onStartGame, isConnected }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundImage: 'url(/image/Home.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
       <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2">

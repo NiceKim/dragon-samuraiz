@@ -10,14 +10,16 @@ import {
 import { TRANSLATIONS, DEFAULT_USER_PREFERENCES } from '../data/translations';
 import useAudio from '../hooks/useAudio';
 
-const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCardReveal, gameState, gameStartTime, gameTimeout, opponentChoice: propOpponentChoice, cardRevealData }) => {
+const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCardReveal, gameState, gameStartTime, gameTimeout, opponentChoice: propOpponentChoice, cardRevealData, focusPoint = 1 }) => {
   const [hasChosen, setHasChosen] = useState(false);
   const [opponentChose, setOpponentChose] = useState(false);
   const [uiTimeLeft, setUiTimeLeft] = useState(5); // UI 전용 타이머
   const [selectedChoice, setSelectedChoice] = useState(null);
   const [opponentChoice, setOpponentChoice] = useState(null);
-  const { playSlashSound, playHitSound, playParrySound } = useAudio();
+  const { playSlashSound, playHitSound, playParrySound, playRoarSound } = useAudio();
   const soundPlayedRef = useRef(false);
+  const [showPowerSlam, setShowPowerSlam] = useState(false);
+  const [showPowerSlamFlash, setShowPowerSlamFlash] = useState(false);
 
   // 언어 설정 가져오기
   const preferences = JSON.parse(localStorage.getItem(STORAGE_KEYS.USER_PREFERENCES)) || DEFAULT_USER_PREFERENCES;
@@ -89,26 +91,35 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
     };
   }, [socket]);
 
-  // 카드 공개 시 효과음 재생 - cardRevealData의 battleResult 사용
+  // 카드 공개 시 효과음 및 플래시 효과
   useEffect(() => {
     if (showCardReveal && cardRevealData && cardRevealData.battleResult && !soundPlayedRef.current) {
-      // 카드 공개 시 결과에 따른 효과음 재생 (한 번만)
       soundPlayedRef.current = true;
+      const myCard = cardRevealData.yourChoice || selectedChoice;
+      const opponentCard = cardRevealData.opponentChoice;
+      if (myCard === 'powerSlam') {
+        playRoarSound();
+        setShowPowerSlamFlash(true);
+        setTimeout(() => setShowPowerSlamFlash(false), 500);
+        return;
+      }
       switch (cardRevealData.battleResult) {
         case 'win':
-          playSlashSound(); // 승리 시 슬래시 사운드
+          playSlashSound();
           break;
         case 'lose':
-          playHitSound(); // 패배 시 히트 사운드
+          playHitSound();
           break;
         case 'draw':
-          playParrySound(); // 무승부 시 패리 사운드
+          if (myCard !== 'focus' && opponentCard !== 'focus') {
+            playParrySound();
+          }
           break;
         default:
           break;
       }
     }
-  }, [showCardReveal, cardRevealData, playSlashSound, playHitSound, playParrySound]);
+  }, [showCardReveal, cardRevealData, playSlashSound, playHitSound, playParrySound, playRoarSound, selectedChoice]);
 
   // 게임 상태 초기화 (통합)
   useEffect(() => {
@@ -124,6 +135,20 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
       soundPlayedRef.current = false; // 효과음 재생 상태 초기화
     }
   }, [gameState, gameResult, showCardReveal]);
+
+  // 집중 포인트가 3이 되는 순간 Power Slam 팝업 띄우기
+  useEffect(() => {
+    if (focusPoint === 3 && !showPowerSlam && !hasChosen) {
+      setShowPowerSlam(true);
+    }
+  }, [focusPoint, showPowerSlam, hasChosen]);
+
+  const handlePowerSlam = () => {
+    setShowPowerSlam(false);
+    setSelectedChoice('powerSlam');
+    setHasChosen(true);
+    onChoice('powerSlam');
+  };
 
   const getStatusMessage = () => {
     if (showCardReveal && cardRevealData && cardRevealData.battleResult) {
@@ -244,11 +269,24 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
     const renderButtonContent = () => (
       <>
         <div className="w-12 h-12 mb-2 flex items-center justify-center">
-          <div className="text-4xl text-white">{choice?.emoji}</div>
+          {choice?.image ? (
+            <img src={choice.image} alt={choice.text} className="w-12 h-12 object-contain" />
+          ) : (
+            <div className="text-4xl text-white">{choice?.emoji}</div>
+          )}
         </div>
         <div className="text-base font-bold text-white px-2 text-center">
           {t[choice?.key]}
         </div>
+        {choice?.key === 'slash' ? (
+          <div className="flex justify-center mt-1">
+            <img src="/image/focus.png" alt="focus" className="w-4 h-4 object-contain" />
+          </div>
+        ) : (
+          <div className="flex justify-center mt-1">
+            <div className="w-4 h-4 rounded-full border border-black bg-transparent" />
+          </div>
+        )}
         {isSelected && (
           <div className="absolute top-2 right-2 w-5 h-5 bg-white rounded-full flex items-center justify-center z-30">
             <span className="text-green-600 text-xs">✓</span>
@@ -265,10 +303,11 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
           return (
             <>
               <div className="w-16 h-16 mb-3 flex items-center justify-center mx-auto">
-                <div className="text-5xl text-white">{choiceData.emoji}</div>
-              </div>
-              <div className="text-lg font-semibold text-white px-2 text-center w-full break-words">
-                {choiceData.text}
+                {choiceData.image ? (
+                  <img src={choiceData.image} alt={choiceData.text} className="w-16 h-16 object-contain" />
+                ) : (
+                  <div className="text-5xl text-white">{choiceData.emoji}</div>
+                )}
               </div>
             </>
           );
@@ -292,7 +331,7 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
         return (
           <>
             <div className="w-16 h-16 mb-3 flex items-center justify-center mx-auto">
-              <div className="text-4xl text-gray-600">🤔</div>
+              <div className="text-4xl text-gray-600">🥷</div>
             </div>
             <div className="text-lg font-semibold text-gray-800 px-2 text-center w-full break-words">
               {isOpponent ? t.CHOICE_COMPLETE : t.CHOICE_COMPLETE}
@@ -320,7 +359,7 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
     return (
       <Component {...buttonProps} className={cardStyles}>
         <div className="absolute inset-0 bg-black z-0" />
-        <div className={`absolute inset-0 ${isButton ? 'bg-blood-50' : (isRevealed ? 'bg-blood-50' : (isWaiting && isOpponent ? 'bg-yellow-100' : 'bg-white'))} ${opacity} z-10`} />
+        <div className={`absolute inset-0 ${isButton ? 'bg-blood-50' : (isRevealed ? 'bg-blood-50' : (isWaiting && isOpponent ? 'bg-gray-400' : 'bg-white'))} ${opacity} z-10`} />
         <div className="relative z-20 text-center w-full h-full flex flex-col items-center justify-center">
           {isButton ? renderButtonContent() : renderCardContent()}
         </div>
@@ -364,6 +403,26 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
 
         {/* 메인 게임 영역 */}
         <div className="flex-1 flex flex-col">
+          {/* Focus Point UI */}
+          <div className="flex justify-center items-center py-4">
+            <div className="flex space-x-3">
+              {[1, 2, 3].map((slot) => (
+                <div
+                  key={slot}
+                  className={`w-12 h-12 rounded-full border-2 transition-all duration-300 flex items-center justify-center`}
+                >
+                  {slot <= focusPoint && (
+                    <img 
+                      src="/image/focus.png" 
+                      alt="focus" 
+                      className="w-8 h-8 object-contain"
+                    />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* 카드 선택 영역 - 좌우 배치 */}
           <div className="flex-1 flex items-center justify-center p-6">
             <div className="w-full max-w-lg">
@@ -429,9 +488,10 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
             <h3 className="text-center text-lg font-semibold text-gray-800 mb-4">{t.CARD_SELECTION}</h3>
             <div className="flex justify-center">
               <div className="grid grid-cols-3 gap-4">
-                {GAME_CHOICES.map((choice) => {
+                {GAME_CHOICES.filter(choice => choice.key !== 'powerSlam').map((choice) => {
                   const isRematchInProgress = gameResult && gameResult.result === 'draw' && gameResult.reason === 'rematch';
-                  const isDisabled = hasChosen || isRematchInProgress || showCardReveal;
+                  const isDisabled = hasChosen || isRematchInProgress || showCardReveal || 
+                    (choice.key === 'slash' && focusPoint <= 0);
                   
                   return (
                     <GameCard
@@ -462,6 +522,33 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
           </div>
         </div>
       </div>
+
+      {showPowerSlam && (
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+          <div className="relative w-96 h-[36rem] bg-blood-50 rounded-xl shadow-lg border-2 border-gray-200 overflow-hidden flex flex-col items-center justify-center">
+            {/* 카드 내용 */}
+            <div className="flex flex-col items-center justify-center w-full h-full">
+              <img src="/image/powerslam.png" alt="Power Slam" className="w-40 h-40 mb-6" />
+              <div className="text-3xl font-bold mb-4 text-white drop-shadow-lg">{t.powerSlam}!</div>
+              <div className="flex justify-center items-center mb-8 space-x-2">
+                {[1,2,3].map(n => (
+                  <img key={n} src="/image/focus.png" alt="focus" className="w-8 h-8 object-contain" />
+                ))}
+              </div>
+              <button
+                onClick={handlePowerSlam}
+                className="px-8 py-4 bg-red-600 hover:bg-red-800 text-white rounded-lg text-xl font-bold shadow-lg transition duration-200 mt-4"
+              >
+                {t.powerSlamUse}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showPowerSlamFlash && (
+        <div className="fixed inset-0 bg-blood-100 bg-opacity-90 animate-fadeout-fast z-[9999]"></div>
+      )}
     </div>
   );
 };

@@ -1,8 +1,8 @@
 // 영어 번역
 const EN = {
   // 홈 화면
-  title: '🐉 Dragon RPS 🐉',
-  subtitle: 'Battle other warriors in real-time!',
+  title: 'Dragon SamuraiZ',
+  subtitle: 'Slay or be slain',
   connected: 'Server Connected',
   connecting: 'Connecting to server...',
   mute: 'Mute',
@@ -14,18 +14,11 @@ const EN = {
   startGame: '🎮 Start Game',
   waitingConnection: 'Waiting for connection...',
   gameRules: 'Game Rules',
-  rule1: '• Auto-lose if not selected within 30 seconds',
-  rule2: '• Auto-win if opponent leaves',
-  rule3: '• Standard rock-paper-scissors rules apply',
 
   // 게임 규칙 팝업
   howToPlay: 'How to Play',
   gameMethod: 'Game Method',
-  gameMethodRule: 'Select a card within time limit.\nEach card has a unique rule.',
-  gameMethodRule1: '• Select a card within 30 seconds',
-  gameMethodRule2: '• Rock beats scissors',
-  gameMethodRule3: '• Scissors beat paper',
-  gameMethodRule4: '• Paper beats rock',
+  gameMethodCardText: `Dragon SamuraiZ \nis a mind game.\nSelect your card,\nBlock your opponent's attack,\n Aim for their opening!`,
   cardDescription: 'Description',
   close: 'Close',
 
@@ -39,15 +32,15 @@ const EN = {
   ],
 
   // 게임 선택
-  rock: 'Rock',
-  paper: 'Paper',
-  scissors: 'Scissors',
-  rockDescription: 'Strong rock that crushes scissors and wins.',
-  paperDescription: 'Flexible paper that wraps rock and wins.',
-  scissorsDescription: 'Sharp scissors that cut paper and win.',
+  slash: 'Slash',
+  parry: 'Parry',
+  focus: 'Focus',
+  slashDescription: "Win if the opponent uses 'Slash' or does not defend. Consumes 1 Focus Point.",
+  parryDescription: "Blocks the opponent's 'Slash'. Does not consume Focus Point.",
+  focusDescription: "Generates 1 Focus Point.",
 
   // 게임 화면
-  GAME_TITLE: '🎮 Rock Paper Scissors',
+  GAME_TITLE: '🎮 Dragon SamuraiZ',
   MY_CHOICE: 'My Choice',
   OPPONENT_CHOICE: 'Opponent Choice',
   CARD_SELECTION: 'Card Selection',
@@ -101,11 +94,10 @@ const EN = {
   NO_CHOICE: 'No Choice',
   TIMEOUT_REASON: 'Result due to timeout.',
   OPPONENT_DISCONNECTED_REASON: 'Opponent disconnected.',
+  powerSlamUse: 'Use Power Slam',
+  powerSlam: 'Power Slam',
+  powerSlamDescription: "Can only be used when you have 3 Focus Points. Strongest Attack that consumes all Focus Points.",
 
-  // 카드 설명
-  rockDescription: 'Strong rock that crushes scissors and wins.',
-  paperDescription: 'Flexible paper that wraps rock and wins.',
-  scissorsDescription: 'Sharp scissors that cut paper and win.'
 };
 
 export default EN; 

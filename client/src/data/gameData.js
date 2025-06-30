@@ -2,18 +2,26 @@ import { TRANSLATIONS, SUPPORTED_LANGUAGES, DEFAULT_USER_PREFERENCES } from './t
 
 // 게임 선택 옵션
 export const GAME_CHOICES = [
-  { 
-    key: 'rock', 
-    emoji: '✊'
+  {
+    key: 'slash',
+    image: '/image/slash.png',
+    text: 'Slash',
   },
-  { 
-    key: 'paper', 
-    emoji: '✋'
+  {
+    key: 'parry',
+    image: '/image/parry.png',
+    text: 'Parry',
   },
-  { 
-    key: 'scissors', 
-    emoji: '✌️'
-  }
+  {
+    key: 'focus',
+    image: '/image/focus.png',
+    text: 'Focus',
+  },
+  {
+    key: 'powerSlam',
+    image: '/image/powerslam.png',
+    text: 'Power Slam',
+  },
 ];
 
 // 카드 애니메이션 설정
@@ -66,13 +74,15 @@ export const AUDIO_CONFIG = {
   SLASH_SOUND: 'slash',
   HIT_SOUND: 'hit',
   PARRY_SOUND: 'parry',
+  ROAR_SOUND: 'roar',
   DEFAULT_VOLUME: 0.5,
   WIN_VOLUME: 0.6,
   LOSE_VOLUME: 0.6,
   DRAW_VOLUME: 0.4,
   SLASH_VOLUME: 0.7,
   HIT_VOLUME: 0.7,
-  PARRY_VOLUME: 0.5
+  PARRY_VOLUME: 0.5,
+  ROAR_VOLUME: 0.7
 };
 
 // 번역 관련 export

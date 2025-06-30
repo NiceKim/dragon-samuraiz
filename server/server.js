@@ -84,7 +84,7 @@ io.on('connection', (socket) => {
   // 게임 선택
   socket.on('choose', (data) => {
     const { choice } = data;
-    console.log('서버 - 선택 수신:', { socketId: socket.id, choice });
+    // console.log('서버 - 선택 수신:', { socketId: socket.id, choice });
     
     const game = activeGames.get(socket.id);
     console.log('게임:', { 
@@ -101,10 +101,16 @@ io.on('connection', (socket) => {
     // 플레이어 선택 저장
     if (game.player1.socketId === socket.id) {
       game.player1.choice = choice;
-      console.log('플레이어1 선택 저장:', { nickname: game.player1.nickname, choice });
+      if (choice === 'focus') game.player1.focusPoint += 1;
+      if (choice === 'slash') game.player1.focusPoint -= 1;
+      if (choice === 'powerSlam') game.player1.focusPoint -= 3;
+      console.log('플레이어1 선택:', { nickname: game.player1.nickname, choice, focusPoint: game.player1.focusPoint });
     } else if (game.player2.socketId === socket.id) {
       game.player2.choice = choice;
-      console.log('플레이어2 선택 저장:', { nickname: game.player2.nickname, choice });
+      if (choice === 'focus') game.player2.focusPoint += 1;
+      if (choice === 'slash') game.player2.focusPoint -= 1;
+      if (choice === 'powerSlam') game.player2.focusPoint -= 3;
+      console.log('플레이어2 선택:', { nickname: game.player2.nickname, choice, focusPoint: game.player2.focusPoint });
     } else {
       console.error('플레이어 식별 실패:', { socketId: socket.id, game });
       return;
@@ -112,18 +118,16 @@ io.on('connection', (socket) => {
     
     // 상대방에게 선택 완료 알림
     const opponentId = game.player1.socketId === socket.id ? game.player2.socketId : game.player1.socketId;
-    console.log('상대방에게 선택 완료 알림:', { opponentId, opponentNickname: game.player1.socketId === socket.id ? game.player2.nickname : game.player1.nickname });
     io.to(opponentId).emit('opponentChose');
     
     // 둘 다 선택했는지 확인
-    console.log('선택 상태 확인:', { 
+    console.log('선택 결과:', { 
       player1Choice: game.player1.choice, 
       player2Choice: game.player2.choice,
       bothChosen: !!(game.player1.choice && game.player2.choice)
     });
     
     if (game.player1.choice && game.player2.choice) {
-      console.log('둘 다 선택 완료 - 결과 계산 시작');
       RevealResult(game);
     }
   });
@@ -164,12 +168,14 @@ function attemptMatch() {
       player1: {
         socketId: player1.socketId,
         nickname: player1.nickname,
-        choice: null
+        choice: null,
+        focusPoint: 1
       },
       player2: {
         socketId: player2.socketId,
         nickname: player2.nickname,
-        choice: null
+        choice: null,
+        focusPoint: 1
       },
       startTime: Date.now(),
       timeoutId: null // 타임아웃 ID 저장
@@ -186,13 +192,15 @@ function attemptMatch() {
     io.to(player1.socketId).emit('startGame', {
       opponent: player2.nickname,
       startTime: Date.now(),
-      gameTimeout: GAME_TIMEOUT
+      gameTimeout: GAME_TIMEOUT,
+      focusPoint: game.player1.focusPoint
     });
     
     io.to(player2.socketId).emit('startGame', {
       opponent: player1.nickname,
       startTime: Date.now(),
-      gameTimeout: GAME_TIMEOUT
+      gameTimeout: GAME_TIMEOUT,
+      focusPoint: game.player2.focusPoint
     });
     
     console.log(`게임 시작: ${player1.nickname} vs ${player2.nickname}`);
@@ -253,7 +261,6 @@ function RevealResult(game, result = null) {
   if (game.timeoutId) {
     clearTimeout(game.timeoutId);
     game.timeoutId = null;
-    console.log('게임 종료 - 타임아웃 취소');
   }
   
   const player1Choice = game.player1.choice;
@@ -265,7 +272,7 @@ function RevealResult(game, result = null) {
   }
   
   // 카드 공개 신호 전송 (선택 정보와 대결 결과 포함)
-  console.log('카드 공개 신호 전송 시작');
+  console.log('카드 공개');
   io.to(game.player1.socketId).emit('cardReveal', {
     yourChoice: player1Choice,
     opponentChoice: player2Choice,
@@ -276,7 +283,6 @@ function RevealResult(game, result = null) {
     opponentChoice: player1Choice,
     battleResult: result === 'win' ? 'lose' : result === 'lose' ? 'win' : 'draw'
   });
-  console.log('카드 공개 신호 전송 완료:', { player1: game.player1.socketId, player2: game.player2.socketId });
   
   // 추가 지연 후 게임 종료 또는 재시작
   setTimeout(() => {
@@ -290,12 +296,14 @@ function RevealResult(game, result = null) {
       io.to(game.player1.socketId).emit('startGame', {
         opponent: game.player2.nickname,
         startTime: game.startTime,
-        gameTimeout: GAME_TIMEOUT
+        gameTimeout: GAME_TIMEOUT,
+        focusPoint: game.player1.focusPoint
       });
       io.to(game.player2.socketId).emit('startGame', {
         opponent: game.player1.nickname,
         startTime: game.startTime,
-        gameTimeout: GAME_TIMEOUT
+        gameTimeout: GAME_TIMEOUT,
+        focusPoint: game.player2.focusPoint
       });
 
       // 새로운 타임아웃 설정
@@ -306,7 +314,7 @@ function RevealResult(game, result = null) {
         handleGameTimeout(game);
       }, GAME_TIMEOUT);
 
-      console.log(`무승부 재경기 시작: ${game.player1.nickname} vs ${game.player2.nickname}`);
+      console.log(`무승부 재경기: ${game.player1.nickname} vs ${game.player2.nickname}`);
     } else {
       // 승패가 결정된 경우 또는 타임아웃인 경우 게임 종료 결과 전송 후 게임 종료
       sendGameResult(game, result, player1Choice, player2Choice);

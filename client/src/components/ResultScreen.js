@@ -151,12 +151,12 @@ const ResultScreen = ({ result, onGoHome, onRematch, onClose }) => {
 
   const getChoiceText = (choice) => {
     switch (choice) {
-      case 'rock':
-        return `${t.rock} ✊`;
-      case 'paper':
-        return `${t.paper} ✋`;
-      case 'scissors':
-        return `${t.scissors} ✌️`;
+      case 'slash':
+        return `${t.slash} 🗡️`;
+      case 'parry':
+        return `${t.parry} 🛡️`;
+      case 'focus':
+        return `${t.focus} 🧘`;
       default:
         return t.NO_CHOICE;
     }

@@ -25,35 +25,20 @@ const useAudio = () => {
     [AUDIO_CONFIG.DRAW_SOUND]: AUDIO_CONFIG.DRAW_VOLUME,
     [AUDIO_CONFIG.SLASH_SOUND]: AUDIO_CONFIG.SLASH_VOLUME,
     [AUDIO_CONFIG.HIT_SOUND]: AUDIO_CONFIG.HIT_VOLUME,
-    [AUDIO_CONFIG.PARRY_SOUND]: AUDIO_CONFIG.PARRY_VOLUME
+    [AUDIO_CONFIG.PARRY_SOUND]: AUDIO_CONFIG.PARRY_VOLUME,
+    [AUDIO_CONFIG.ROAR_SOUND]: AUDIO_CONFIG.ROAR_VOLUME
   }), []);
 
-  // 오디오 파일 프리로드
+  // 오디오 파일 프리로드 (간단화)
   const preloadAudio = useCallback(() => {
     if (isPreloaded.current) return;
-
     Object.entries(audioFiles).forEach(([soundName, volume]) => {
-      try {
-        const audio = new Audio(`/audio/${soundName}.mp3`);
-        audio.volume = volume;
-        audio.preload = 'auto';
-        
-        audio.addEventListener('canplaythrough', () => {
-          console.log(`${soundName}.mp3 프리로드 완료`);
-        });
-
-        audio.addEventListener('error', (e) => {
-          console.log(`${soundName}.mp3 로드 실패:`, e);
-        });
-
-        audioRefs.current[soundName] = audio;
-      } catch (error) {
-        console.log(`${soundName} 프리로드 실패:`, error);
-      }
+      const audio = new window.Audio(`/audio/${soundName}.mp3`);
+      audio.volume = volume;
+      audio.preload = 'auto';
+      audioRefs.current[soundName] = audio;
     });
-
     isPreloaded.current = true;
-    console.log('오디오 프리로드 완료');
   }, [audioFiles]);
 
   // 컴포넌트 마운트 시 즉시 프리로드
@@ -83,34 +68,17 @@ const useAudio = () => {
     isMuted.current = preferences.audioMuted;
   }, [getUserPreferences]);
 
-  // 오디오 파일 로드 및 재생
+  // 오디오 파일 로드 및 재생 (간단화)
   const playSound = useCallback((soundName, volume = AUDIO_CONFIG.DEFAULT_VOLUME) => {
-    // 음소거 상태면 재생하지 않음
     if (isMuted.current) return;
-
-    try {
-      // 프리로드되지 않은 경우 즉시 로드
-      if (!audioRefs.current[soundName]) {
-        audioRefs.current[soundName] = new Audio(`/audio/${soundName}.mp3`);
-        audioRefs.current[soundName].volume = volume;
-      }
-
-      const audio = audioRefs.current[soundName];
-      
-      // 이전 재생 중이면 처음부터 다시 재생
-      audio.currentTime = 0;
-      
-      // 재생
-      const playPromise = audio.play();
-      
-      if (playPromise !== undefined) {
-        playPromise.catch(error => {
-          console.log('오디오 재생 실패:', error);
-        });
-      }
-    } catch (error) {
-      console.log('오디오 로드 실패:', error);
+    let audio = audioRefs.current[soundName];
+    if (!audio) {
+      audio = new window.Audio(`/audio/${soundName}.mp3`);
+      audio.volume = volume;
+      audioRefs.current[soundName] = audio;
     }
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
   }, []);
 
   // 게임 결과 사운드 (AUDIO_CONFIG 사용)
@@ -139,6 +107,10 @@ const useAudio = () => {
     playSound(AUDIO_CONFIG.PARRY_SOUND, AUDIO_CONFIG.PARRY_VOLUME);
   }, [playSound]);
 
+  const playRoarSound = useCallback(() => {
+    playSound('roar', 0.7);
+  }, [playSound]);
+
   return {
     playSound,
     playWinSound,
@@ -147,6 +119,7 @@ const useAudio = () => {
     playSlashSound,
     playHitSound,
     playParrySound,
+    playRoarSound,
     toggleMute,
     getMuteState
   };
