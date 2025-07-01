@@ -35,9 +35,14 @@ const EN = {
   slash: 'Slash',
   parry: 'Parry',
   focus: 'Focus',
-  slashDescription: "Win if the opponent uses 'Slash' or does not defend. Consumes 1 Focus Point.",
-  parryDescription: "Blocks the opponent's 'Slash'. Does not consume Focus Point.",
+  powerSlam: 'Power Slam',
+  slashDescription: "Attack the opponent to defeat them. Consumes 1 Focus Point.",
+  parryDescription: "Blocks the opponent's attack. Does not consume Focus Point.",
   focusDescription: "Generates 1 Focus Point.",
+  powerSlamDescription: "Can only be used when you have 3 Focus Points. Strongest Attack that consumes all Focus Points.",
+  powerSlamUse: 'Use Power Slam',
+  focusPoint: 'Focus Point',
+  focusPointDescription: 'Some of your actions require focus point, You can use "Focus" to gain it.',
 
   // 게임 화면
   GAME_TITLE: '🎮 Dragon SamuraiZ',
@@ -94,10 +99,6 @@ const EN = {
   NO_CHOICE: 'No Choice',
   TIMEOUT_REASON: 'Result due to timeout.',
   OPPONENT_DISCONNECTED_REASON: 'Opponent disconnected.',
-  powerSlamUse: 'Use Power Slam',
-  powerSlam: 'Power Slam',
-  powerSlamDescription: "Can only be used when you have 3 Focus Points. Strongest Attack that consumes all Focus Points.",
-
 };
 
 export default EN; 

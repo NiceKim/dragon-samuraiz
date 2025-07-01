@@ -169,13 +169,13 @@ function attemptMatch() {
         socketId: player1.socketId,
         nickname: player1.nickname,
         choice: null,
-        focusPoint: 0
+        focusPoint: 3
       },
       player2: {
         socketId: player2.socketId,
         nickname: player2.nickname,
         choice: null,
-        focusPoint: 0
+        focusPoint: 3
       },
       startTime: Date.now(),
       timeoutId: null // 타임아웃 ID 저장

@@ -54,7 +54,6 @@ export const DEFAULT_STATS = {
   totalGames: 0,
   wins: 0,
   losses: 0,
-  draws: 0,
   currentStreak: 0,
   maxStreak: 0,
   lastResult: null

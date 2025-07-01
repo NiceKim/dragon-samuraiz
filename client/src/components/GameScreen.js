@@ -20,6 +20,7 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
   const soundPlayedRef = useRef(false);
   const [showPowerSlam, setShowPowerSlam] = useState(false);
   const [showPowerSlamFlash, setShowPowerSlamFlash] = useState(false);
+  const [fadeOutFlash, setFadeOutFlash] = useState(false);
 
   // 언어 설정 가져오기
   const preferences = JSON.parse(localStorage.getItem(STORAGE_KEYS.USER_PREFERENCES)) || DEFAULT_USER_PREFERENCES;
@@ -97,11 +98,16 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
       soundPlayedRef.current = true;
       const myCard = cardRevealData.yourChoice || selectedChoice;
       const opponentCard = cardRevealData.opponentChoice;
-      if (myCard === 'powerSlam') {
+      if (myCard === 'powerSlam' || opponentCard === 'powerSlam') {
         playRoarSound();
         setShowPowerSlamFlash(true);
-        setTimeout(() => setShowPowerSlamFlash(false), 500);
-        return;
+        setFadeOutFlash(false);
+        const fadeTimer = setTimeout(() => setFadeOutFlash(true), 1500); // 1.5초 후 페이드아웃 시작
+        const hideTimer = setTimeout(() => setShowPowerSlamFlash(false), 2000); // 2초 후 완전히 제거
+        return () => {
+          clearTimeout(fadeTimer);
+          clearTimeout(hideTimer);
+        };
       }
       switch (cardRevealData.battleResult) {
         case 'win':
@@ -206,14 +212,6 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
     const choiceData = GAME_CHOICES.find(c => c.key === choiceKey);
     
     return choiceData ? { ...choiceData } : null;
-  };
-
-  // 승패 판정 함수 - cardRevealData의 battleResult 우선 사용
-  const getWinner = () => {
-    if (cardRevealData && cardRevealData.battleResult) {
-      return cardRevealData.battleResult;
-    }
-    return gameResult && gameResult.result ? gameResult.result : null;
   };
 
   // 게임 카드 컴포넌트
@@ -451,21 +449,6 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
                   />
                 </div>
               </div>
-
-              {/* 승패 표시 */}
-              {showCardReveal && cardRevealData && cardRevealData.battleResult && (
-                <div className="text-center">
-                  <div className={`inline-flex items-center px-4 md:px-6 py-2 md:py-3 rounded-full text-lg md:text-xl font-bold ${
-                    getWinner() === 'win' ? 'bg-green-100 text-green-700' :
-                    getWinner() === 'lose' ? 'bg-red-100 text-red-700' :
-                    'bg-yellow-100 text-yellow-700'
-                  }`}>
-                    {getWinner() === 'win' ? t.WIN_TEXT :
-                     getWinner() === 'lose' ? t.LOSE_TEXT :
-                     t.DRAW_TEXT}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
 
@@ -474,7 +457,7 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
             <div className={`bg-gray-50 rounded-full py-2 md:py-3 px-4 md:px-6 shadow-md text-center ${getStatusColor()}`}>
               <span className="text-base md:text-lg font-semibold">{getStatusMessage()}</span>
             </div>
-        </div>
+          </div>
 
           {/* 하단 카드 선택 버튼들 */}
           <div className="bg-gray-50 shadow-lg rounded-t-3xl p-3 md:p-6">
@@ -551,7 +534,7 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
       )}
 
       {showPowerSlamFlash && (
-        <div className="fixed inset-0 bg-blood-100 bg-opacity-90 animate-fadeout-fast z-[9999]"></div>
+        <div className={`fixed inset-0 bg-blood-100 bg-opacity-90 z-[9999] ${fadeOutFlash ? 'animate-fadeout-fast' : ''}`}></div>
       )}
     </div>
   );
