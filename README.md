@@ -1,5 +1,5 @@
-# DEMO LINK
-[🎮 Live Demo](http://dragon-samurai-z-env.eba-bdb4qx2n.ap-southeast-1.elasticbeanstalk.com/)
+
+# [🎮 PLAY IT HERE](http://dragon-samurai-z-env.eba-bdb4qx2n.ap-southeast-1.elasticbeanstalk.com/)
 
 # 🐉 용사 가위바위보 게임
 
