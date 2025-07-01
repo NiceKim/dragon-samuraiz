@@ -1,3 +1,6 @@
+# DEMO LINK
+[🎮 Live Demo](http://dragon-samurai-z-env.eba-bdb4qx2n.ap-southeast-1.elasticbeanstalk.com/)
+
 # 🐉 용사 가위바위보 게임
 
 React + Tailwind CSS + Node.js(Express) + Socket.IO로 구성된 실시간 가위바위보 게임입니다.
