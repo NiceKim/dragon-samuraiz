@@ -47,11 +47,7 @@ const GameRulesPopup = ({ isOpen, onClose, language }) => {
           </button>
 
           {/* 카드 */}
-          <div className="relative w-96 h-[36rem] bg-blood-50 rounded-xl shadow-lg border-2 border-gray-200 overflow-hidden">
-            {/* 검은색 뒷배경 */}
-            <div className="absolute inset-0 bg-gray-500 z-0"></div>
-            {/* blood 색상 배경 */}
-            <div className="absolute inset-0 bg-blood-50 z-10"></div>
+          <div className="relative w-96 h-[36rem] bg-blood-50 rounded-xl shadow-2xl border-4 border-gray-500 overflow-hidden">
             {/* 카드 내용 */}
             <div className="relative z-20 w-full h-full flex flex-col items-center justify-center">
               <div className="text-center w-full">
@@ -125,7 +121,7 @@ const GameRulesPopup = ({ isOpen, onClose, language }) => {
             <button
               key={index}
               onClick={() => setCurrentCardIndex(index)}
-              className={`w-3 h-3 rounded-full transition duration-200 ${
+              className={`w-1 h-1 rounded-full transition duration-200 ${
                 index === currentCardIndex ? 'bg-blood-50' : 'bg-gray-300'
               }`}
             />

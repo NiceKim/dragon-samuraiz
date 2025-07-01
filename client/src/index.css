@@ -11,6 +11,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   min-height: 100vh;
+  /* 모바일에서 스크롤 방지 */
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
 }
 
 code {
@@ -21,4 +26,35 @@ code {
 #game {
   width: 100%;
   height: 100%;
+}
+
+/* 모바일 터치 최적화 */
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* 모바일에서 버튼 터치 영역 최적화 */
+button {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* 모바일에서 카드 터치 영역 최적화 */
+.card-touch {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* 데스크톱에서는 스크롤 허용 */
+@media (min-width: 768px) {
+  body {
+    overflow: auto;
+    position: static;
+  }
 } 

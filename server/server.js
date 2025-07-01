@@ -45,8 +45,8 @@ if (process.env.NODE_ENV === 'production') {
 // 게임 상태 관리
 const matchQueue = [];
 const activeGames = new Map();
-const GAME_TIMEOUT =  10000; // 게임 타임아웃 시간 (10초)
-const CARD_REVEAL_DELAY =  3000; // 카드 공개 지연 시간 (5초)
+const GAME_TIMEOUT =  30000; // 게임 타임아웃 시간 (30초)
+const CARD_REVEAL_DELAY =  3000; // 카드 공개 지연 시간 (3초)
 
 io.on('connection', (socket) => {
   console.log('사용자 연결:', socket.id);
@@ -169,13 +169,13 @@ function attemptMatch() {
         socketId: player1.socketId,
         nickname: player1.nickname,
         choice: null,
-        focusPoint: 1
+        focusPoint: 0
       },
       player2: {
         socketId: player2.socketId,
         nickname: player2.nickname,
         choice: null,
-        focusPoint: 1
+        focusPoint: 0
       },
       startTime: Date.now(),
       timeoutId: null // 타임아웃 ID 저장

@@ -22,9 +22,14 @@ module.exports = {
           '0%, 100%': { transform: 'scale(1)' },
           '50%': { transform: 'scale(1.04)' },
         },
+        fadeoutFast: {
+          '0%': { opacity: '1' },
+          '100%': { opacity: '0' },
+        },
       },
       animation: {
         'win-card': 'winCard 1.2s ease-in-out infinite',
+        'fadeout-fast': 'fadeoutFast 0.5s ease-out forwards',
       },
     },
   },

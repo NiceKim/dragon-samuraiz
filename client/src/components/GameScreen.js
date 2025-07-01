@@ -16,7 +16,7 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
   const [uiTimeLeft, setUiTimeLeft] = useState(5); // UI 전용 타이머
   const [selectedChoice, setSelectedChoice] = useState(null);
   const [opponentChoice, setOpponentChoice] = useState(null);
-  const { playSlashSound, playHitSound, playParrySound, playRoarSound } = useAudio();
+  const { playSlashSound, playHitSound, playParrySound, playRoarSound, playFocusSound } = useAudio();
   const soundPlayedRef = useRef(false);
   const [showPowerSlam, setShowPowerSlam] = useState(false);
   const [showPowerSlamFlash, setShowPowerSlamFlash] = useState(false);
@@ -114,6 +114,10 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
           if (myCard !== 'focus' && opponentCard !== 'focus') {
             playParrySound();
           }
+          else {
+            playFocusSound();
+          }
+
           break;
         default:
           break;
@@ -227,7 +231,7 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
     
     // 스타일 계산
     const base = 'relative rounded-xl shadow-lg border-2 border-gray-200 overflow-hidden transform';
-    const size = isButton ? 'w-24 h-36' : 'w-32 h-48';
+    const size = isButton ? 'w-20 h-28 md:w-24 md:h-36' : 'w-24 h-36 md:w-32 md:h-48';
     const interactive = isButton ? 'cursor-pointer hover:border-blood-100 hover:border-4' : '';
     const selected = isSelected ? 'ring-4 ring-green-300 scale-105' : '';
     
@@ -268,27 +272,27 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
     // 렌더링 로직
     const renderButtonContent = () => (
       <>
-        <div className="w-12 h-12 mb-2 flex items-center justify-center">
+        <div className="w-8 h-8 md:w-12 md:h-12 mb-1 md:mb-2 flex items-center justify-center">
           {choice?.image ? (
-            <img src={choice.image} alt={choice.text} className="w-12 h-12 object-contain" />
+            <img src={choice.image} alt={choice.text} className="w-8 h-8 md:w-12 md:h-12 object-contain" />
           ) : (
-            <div className="text-4xl text-white">{choice?.emoji}</div>
+            <div className="text-2xl md:text-4xl text-white">{choice?.emoji}</div>
           )}
         </div>
-        <div className="text-base font-bold text-white px-2 text-center">
+        <div className="text-xs md:text-base font-bold text-white px-1 md:px-2 text-center">
           {t[choice?.key]}
         </div>
         {choice?.key === 'slash' ? (
           <div className="flex justify-center mt-1">
-            <img src="/image/focus.png" alt="focus" className="w-4 h-4 object-contain" />
+            <img src="/image/focus.png" alt="focus" className="w-3 h-3 md:w-4 md:h-4 object-contain" />
           </div>
         ) : (
           <div className="flex justify-center mt-1">
-            <div className="w-4 h-4 rounded-full border border-black bg-transparent" />
+            <div className="w-3 h-3 md:w-4 md:h-4 rounded-full border border-black bg-transparent" />
           </div>
         )}
         {isSelected && (
-          <div className="absolute top-2 right-2 w-5 h-5 bg-white rounded-full flex items-center justify-center z-30">
+          <div className="absolute top-1 right-1 md:top-2 md:right-2 w-4 h-4 md:w-5 md:h-5 bg-white rounded-full flex items-center justify-center z-30">
             <span className="text-green-600 text-xs">✓</span>
           </div>
         )}
@@ -302,11 +306,11 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
           // 선택 정보가 있으면 실제 선택 표시
           return (
             <>
-              <div className="w-16 h-16 mb-3 flex items-center justify-center mx-auto">
+              <div className="w-12 h-12 md:w-16 md:h-16 mb-2 md:mb-3 flex items-center justify-center mx-auto">
                 {choiceData.image ? (
-                  <img src={choiceData.image} alt={choiceData.text} className="w-16 h-16 object-contain" />
+                  <img src={choiceData.image} alt={choiceData.text} className="w-12 h-12 md:w-16 md:h-16 object-contain" />
                 ) : (
-                  <div className="text-5xl text-white">{choiceData.emoji}</div>
+                  <div className="text-3xl md:text-5xl text-white">{choiceData.emoji}</div>
                 )}
               </div>
             </>
@@ -315,10 +319,10 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
           // 선택 정보가 없으면 (타임아웃 등) 기본 상태 표시
           return (
             <>
-              <div className="w-16 h-16 mb-3 flex items-center justify-center mx-auto">
-                <div className="text-4xl">❓</div>
+              <div className="w-12 h-12 md:w-16 md:h-16 mb-2 md:mb-3 flex items-center justify-center mx-auto">
+                <div className="text-2xl md:text-4xl">❓</div>
               </div>
-              <div className="text-sm px-2 text-center w-full break-words">
+              <div className="text-xs md:text-sm px-1 md:px-2 text-center w-full break-words">
                 {isOpponent ? t.WAITING : t.SELECT_PLEASE}
               </div>
             </>
@@ -330,10 +334,10 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
       if (isWaiting) {
         return (
           <>
-            <div className="w-16 h-16 mb-3 flex items-center justify-center mx-auto">
-              <div className="text-4xl text-gray-600">🥷</div>
+            <div className="w-12 h-12 md:w-16 md:h-16 mb-2 md:mb-3 flex items-center justify-center mx-auto">
+              <div className="text-2xl md:text-4xl text-gray-600">🥷</div>
             </div>
-            <div className="text-lg font-semibold text-gray-800 px-2 text-center w-full break-words">
+            <div className="text-sm md:text-lg font-semibold text-gray-800 px-1 md:px-2 text-center w-full break-words">
               {isOpponent ? t.CHOICE_COMPLETE : t.CHOICE_COMPLETE}
             </div>
           </>
@@ -343,10 +347,10 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
       // 기본 상태 (선택 전)
       return (
         <>
-          <div className="w-16 h-16 mb-3 flex items-center justify-center mx-auto">
-            <div className="text-4xl">❓</div>
+          <div className="w-12 h-12 md:w-16 md:h-16 mb-2 md:mb-3 flex items-center justify-center mx-auto">
+            <div className="text-2xl md:text-4xl">❓</div>
           </div>
-          <div className="text-sm px-2 text-center w-full break-words">
+          <div className="text-xs md:text-sm px-1 md:px-2 text-center w-full break-words">
             {isOpponent ? t.WAITING : t.SELECT_PLEASE}
           </div>
         </>
@@ -357,7 +361,7 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
     const buttonProps = isButton ? { onClick, disabled: isDisabled } : {};
 
     return (
-      <Component {...buttonProps} className={cardStyles}>
+      <Component {...buttonProps} className={`${cardStyles} ${isButton ? 'card-touch' : ''}`}>
         <div className="absolute inset-0 bg-black z-0" />
         <div className={`absolute inset-0 ${isButton ? 'bg-blood-50' : (isRevealed ? 'bg-blood-50' : (isWaiting && isOpponent ? 'bg-gray-400' : 'bg-white'))} ${opacity} z-10`} />
         <div className="relative z-20 text-center w-full h-full flex flex-col items-center justify-center">
@@ -368,69 +372,58 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
   };
 
   return (
-    <div className="min-h-screen flex justify-center">
+    <div className="min-h-screen md:min-h-screen h-screen flex justify-center">
 
-      {/* 게임 컨테이너 - 고정 너비 */}
-      <div className="w-[555px] min-h-screen flex flex-col bg-white shadow-2xl">
+      {/* 게임 컨테이너 - 반응형 너비 */}
+      <div className="w-full md:w-[555px] h-screen md:min-h-screen flex flex-col bg-white shadow-2xl">
         {/* 상단 헤더 */}
-        <div className="bg-white shadow-md p-4">
-          <div className="flex justify-between items-center mb-2">
-            <h1 className="text-xl font-bold text-gray-800">{t.GAME_TITLE}</h1>
-            <div className="flex items-center space-x-2">
-              <span className="text-2xl">⏰</span>
-              <span className={`text-lg font-bold ${uiTimeLeft <= GAME_CONFIG.WARNING_TIME ? 'text-red-600' : 'text-gray-700'}`}>
+        <div className="bg-white shadow-md p-2 md:p-4">
+          <div className="flex justify-between items-center mb-1 md:mb-2">
+            <h1 className="text-lg md:text-xl font-bold text-gray-800">{t.GAME_TITLE}</h1>
+            <div className="flex items-center space-x-1 md:space-x-2">
+              <span className="text-xl md:text-2xl">⏰</span>
+              <span className={`text-base md:text-lg font-bold ${uiTimeLeft <= GAME_CONFIG.WARNING_TIME ? 'text-red-600' : 'text-gray-700'}`}>
                 {uiTimeLeft}{t.TIMER}
               </span>
             </div>
           </div>
           
           {/* 플레이어 정보 */}
-          <div className="flex justify-between items-center text-sm">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <span className="text-sm">👤</span>
+          <div className="flex justify-between items-center text-xs md:text-sm mb-2 md:mb-3">
+            <div className="flex items-center space-x-1 md:space-x-2">
+              <div className="w-6 h-6 md:w-8 md:h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <span className="text-xs md:text-sm">👤</span>
               </div>
-              <span className="font-semibold text-blue-600">{nickname}</span>
+              <span className="font-semibold text-blue-600 truncate max-w-20 md:max-w-none">{nickname}</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <span className="font-semibold text-purple-600">{opponent}</span>
-              <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                <span className="text-sm">👤</span>
+            <div className="flex items-center space-x-1 md:space-x-2">
+              <span className="font-semibold text-purple-600 truncate max-w-20 md:max-w-none">{opponent}</span>
+              <div className="w-6 h-6 md:w-8 md:h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                <span className="text-xs md:text-sm">👤</span>
               </div>
+            </div>
+          </div>
+
+          {/* 진행 상황 표시 - 상단으로 이동 */}
+          <div className="flex justify-center">
+            <div className="flex space-x-1 md:space-x-2">
+              <div className={`w-2 h-2 md:w-3 md:h-3 rounded-full ${hasChosen ? 'bg-green-500' : 'bg-gray-300'}`}></div>
+              <div className={`w-2 h-2 md:w-3 md:h-3 rounded-full ${opponentChose ? 'bg-yellow-500' : 'bg-gray-300'}`}></div>
+              <div className={`w-2 h-2 md:w-3 md:h-3 rounded-full ${showCardReveal ? 'bg-blue-500' : 'bg-gray-300'}`}></div>
             </div>
           </div>
         </div>
 
         {/* 메인 게임 영역 */}
         <div className="flex-1 flex flex-col">
-          {/* Focus Point UI */}
-          <div className="flex justify-center items-center py-4">
-            <div className="flex space-x-3">
-              {[1, 2, 3].map((slot) => (
-                <div
-                  key={slot}
-                  className={`w-12 h-12 rounded-full border-2 transition-all duration-300 flex items-center justify-center`}
-                >
-                  {slot <= focusPoint && (
-                    <img 
-                      src="/image/focus.png" 
-                      alt="focus" 
-                      className="w-8 h-8 object-contain"
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-
           {/* 카드 선택 영역 - 좌우 배치 */}
-          <div className="flex-1 flex items-center justify-center p-6">
+          <div className="flex-1 flex items-center justify-center p-2 md:p-6">
             <div className="w-full max-w-lg">
               {/* 카드 배치 컨테이너 */}
-              <div className="flex justify-center items-center mb-6 space-x-8">
+              <div className="flex justify-center items-center mb-3 md:mb-6 space-x-4 md:space-x-8">
                 {/* 내 선택 카드 - 좌측 */}
                 <div className="text-center">
-                  <h3 className="text-lg font-semibold text-gray-700 mb-3">{t.MY_CHOICE}</h3>
+                  <h3 className="text-sm md:text-lg font-semibold text-gray-700 mb-2 md:mb-3">{t.MY_CHOICE}</h3>
                   <GameCard 
                     choice={selectedChoice}
                     isMyCard={true}
@@ -442,13 +435,13 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
 
                 {/* VS 표시 */}
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-gray-400 mb-2">VS</div>
-                  <div className="w-12 h-1 bg-gray-300 rounded-full"></div>
+                  <div className="text-xl md:text-3xl font-bold text-gray-400 mb-1 md:mb-2">VS</div>
+                  <div className="w-8 md:w-12 h-1 bg-gray-300 rounded-full"></div>
                 </div>
 
                 {/* 상대 선택 카드 - 우측 */}
                 <div className="text-center">
-                  <h3 className="text-lg font-semibold text-gray-700 mb-3">{t.OPPONENT_CHOICE}</h3>
+                  <h3 className="text-sm md:text-lg font-semibold text-gray-700 mb-2 md:mb-3">{t.OPPONENT_CHOICE}</h3>
                   <GameCard 
                     choice={opponentChoice}
                     isMyCard={false}
@@ -462,7 +455,7 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
               {/* 승패 표시 */}
               {showCardReveal && cardRevealData && cardRevealData.battleResult && (
                 <div className="text-center">
-                  <div className={`inline-flex items-center px-6 py-3 rounded-full text-xl font-bold ${
+                  <div className={`inline-flex items-center px-4 md:px-6 py-2 md:py-3 rounded-full text-lg md:text-xl font-bold ${
                     getWinner() === 'win' ? 'bg-green-100 text-green-700' :
                     getWinner() === 'lose' ? 'bg-red-100 text-red-700' :
                     'bg-yellow-100 text-yellow-700'
@@ -477,17 +470,17 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
           </div>
 
           {/* 상태 메시지 */}
-          <div className="px-4 mb-4">
-            <div className={`bg-gray-50 rounded-full py-3 px-6 shadow-md text-center ${getStatusColor()}`}>
-              <span className="text-lg font-semibold">{getStatusMessage()}</span>
+          <div className="px-2 md:px-4 mb-2 md:mb-4">
+            <div className={`bg-gray-50 rounded-full py-2 md:py-3 px-4 md:px-6 shadow-md text-center ${getStatusColor()}`}>
+              <span className="text-base md:text-lg font-semibold">{getStatusMessage()}</span>
             </div>
         </div>
 
           {/* 하단 카드 선택 버튼들 */}
-          <div className="bg-gray-50 shadow-lg rounded-t-3xl p-6">
-            <h3 className="text-center text-lg font-semibold text-gray-800 mb-4">{t.CARD_SELECTION}</h3>
+          <div className="bg-gray-50 shadow-lg rounded-t-3xl p-3 md:p-6">
+            <h3 className="text-center text-base md:text-lg font-semibold text-gray-800 mb-3 md:mb-4">{t.CARD_SELECTION}</h3>
             <div className="flex justify-center">
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 gap-2 md:gap-4">
                 {GAME_CHOICES.filter(choice => choice.key !== 'powerSlam').map((choice) => {
                   const isRematchInProgress = gameResult && gameResult.result === 'draw' && gameResult.reason === 'rematch';
                   const isDisabled = hasChosen || isRematchInProgress || showCardReveal || 
@@ -511,12 +504,23 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
               </div>
             </div>
 
-            {/* 진행 상황 표시 */}
-            <div className="mt-6 flex justify-center">
-              <div className="flex space-x-2">
-                <div className={`w-3 h-3 rounded-full ${hasChosen ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-                <div className={`w-3 h-3 rounded-full ${opponentChose ? 'bg-yellow-500' : 'bg-gray-300'}`}></div>
-                <div className={`w-3 h-3 rounded-full ${showCardReveal ? 'bg-blue-500' : 'bg-gray-300'}`}></div>
+            {/* Focus Point UI - 하단으로 이동 */}
+            <div className="mt-3 md:mt-6 flex justify-center">
+              <div className="flex space-x-2 md:space-x-3">
+                {[1, 2, 3].map((slot) => (
+                  <div
+                    key={slot}
+                    className={`w-8 h-8 md:w-12 md:h-12 rounded-full border-2 transition-all duration-300 flex items-center justify-center`}
+                  >
+                    {slot <= focusPoint && (
+                      <img 
+                        src="/image/focus.png" 
+                        alt="focus" 
+                        className="w-6 h-6 md:w-8 md:h-8 object-contain"
+                      />
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -524,20 +528,20 @@ const GameScreen = ({ nickname, opponent, onChoice, socket, gameResult, showCard
       </div>
 
       {showPowerSlam && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
-          <div className="relative w-96 h-[36rem] bg-blood-50 rounded-xl shadow-lg border-2 border-gray-200 overflow-hidden flex flex-col items-center justify-center">
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+          <div className="relative w-80 h-80 md:w-96 md:h-[36rem] bg-blood-50 rounded-xl shadow-lg border-2 border-gray-200 overflow-hidden flex flex-col items-center justify-center">
             {/* 카드 내용 */}
-            <div className="flex flex-col items-center justify-center w-full h-full">
-              <img src="/image/powerslam.png" alt="Power Slam" className="w-40 h-40 mb-6" />
-              <div className="text-3xl font-bold mb-4 text-white drop-shadow-lg">{t.powerSlam}!</div>
-              <div className="flex justify-center items-center mb-8 space-x-2">
+            <div className="flex flex-col items-center justify-center w-full h-full p-4">
+              <img src="/image/powerslam.png" alt="Power Slam" className="w-24 h-24 md:w-40 md:h-40 mb-4 md:mb-6" />
+              <div className="text-xl md:text-3xl font-bold mb-3 md:mb-4 text-white drop-shadow-lg">{t.powerSlam}!</div>
+              <div className="flex justify-center items-center mb-6 md:mb-8 space-x-1 md:space-x-2">
                 {[1,2,3].map(n => (
-                  <img key={n} src="/image/focus.png" alt="focus" className="w-8 h-8 object-contain" />
+                  <img key={n} src="/image/focus.png" alt="focus" className="w-6 h-6 md:w-8 md:h-8 object-contain" />
                 ))}
               </div>
               <button
                 onClick={handlePowerSlam}
-                className="px-8 py-4 bg-red-600 hover:bg-red-800 text-white rounded-lg text-xl font-bold shadow-lg transition duration-200 mt-4"
+                className="px-6 md:px-8 py-3 md:py-4 bg-red-600 hover:bg-red-800 text-white rounded-lg text-lg md:text-xl font-bold shadow-lg transition duration-200 mt-2 md:mt-4"
               >
                 {t.powerSlamUse}
               </button>
