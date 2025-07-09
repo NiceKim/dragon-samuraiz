@@ -54,7 +54,6 @@ export const DEFAULT_STATS = {
   totalGames: 0,
   wins: 0,
   losses: 0,
-  draws: 0,
   currentStreak: 0,
   maxStreak: 0,
   lastResult: null
@@ -75,6 +74,7 @@ export const AUDIO_CONFIG = {
   HIT_SOUND: 'hit',
   PARRY_SOUND: 'parry',
   ROAR_SOUND: 'roar',
+  FOCUS_SOUND: 'focus',
   DEFAULT_VOLUME: 0.5,
   WIN_VOLUME: 0.6,
   LOSE_VOLUME: 0.6,
@@ -82,7 +82,8 @@ export const AUDIO_CONFIG = {
   SLASH_VOLUME: 0.7,
   HIT_VOLUME: 0.7,
   PARRY_VOLUME: 0.5,
-  ROAR_VOLUME: 0.7
+  ROAR_VOLUME: 0.7,
+  FOCUS_VOLUME: 0.4
 };
 
 // 번역 관련 export

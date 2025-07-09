@@ -26,7 +26,8 @@ const useAudio = () => {
     [AUDIO_CONFIG.SLASH_SOUND]: AUDIO_CONFIG.SLASH_VOLUME,
     [AUDIO_CONFIG.HIT_SOUND]: AUDIO_CONFIG.HIT_VOLUME,
     [AUDIO_CONFIG.PARRY_SOUND]: AUDIO_CONFIG.PARRY_VOLUME,
-    [AUDIO_CONFIG.ROAR_SOUND]: AUDIO_CONFIG.ROAR_VOLUME
+    [AUDIO_CONFIG.ROAR_SOUND]: AUDIO_CONFIG.ROAR_VOLUME,
+    [AUDIO_CONFIG.FOCUS_SOUND]: AUDIO_CONFIG.FOCUS_VOLUME
   }), []);
 
   // 오디오 파일 프리로드 (간단화)
@@ -108,7 +109,11 @@ const useAudio = () => {
   }, [playSound]);
 
   const playRoarSound = useCallback(() => {
-    playSound('roar', 0.7);
+    playSound(AUDIO_CONFIG.ROAR_SOUND, AUDIO_CONFIG.ROAR_VOLUME);
+  }, [playSound]);
+
+  const playFocusSound = useCallback(() => {
+    playSound(AUDIO_CONFIG.FOCUS_SOUND, AUDIO_CONFIG.FOCUS_VOLUME);
   }, [playSound]);
 
   return {
@@ -120,6 +125,7 @@ const useAudio = () => {
     playHitSound,
     playParrySound,
     playRoarSound,
+    playFocusSound,
     toggleMute,
     getMuteState
   };
