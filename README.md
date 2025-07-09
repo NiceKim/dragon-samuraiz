@@ -1,3 +1,5 @@
+# [🎮 PLAY IT HERE](http://dragon-samurai-z-env.eba-bdb4qx2n.ap-southeast-1.elasticbeanstalk.com/)
+
 # 🐉 Dragon SamuraiZ - Rock Paper Scissors Game
 
 A real-time Rock Paper Scissors game built with React, Tailwind CSS, Node.js (Express), and Socket.IO.
